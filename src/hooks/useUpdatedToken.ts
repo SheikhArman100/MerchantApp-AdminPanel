@@ -10,8 +10,9 @@ const useUpdatedToken = () => {
     const response = await axiosPublic.get('/auth/token', {
       withCredentials: true,
     });
-    setAccessToken(response.data.accessToken);
-    return response.data.accessToken;
+
+    setAccessToken(response.data.data.accessToken);
+    return response.data.data.accessToken;
   };
   return update;
 };

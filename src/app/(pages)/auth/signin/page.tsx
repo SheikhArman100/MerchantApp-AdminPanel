@@ -1,13 +1,22 @@
 'use client';
+import Spinner from '@/components/Spinner';
 import { ISignInFormData } from '@/interfaces/auth.interface';
+import { signinUser } from '@/services/auth.service';
+import { useAuthStore } from '@/state/auth.state';
 import { signInSchema } from '@/validation/auth.validation';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { toast } from 'react-toastify';
 
 const SignIn = () => {
   const [passwordHidden, setPasswordHidden] = useState(true);
+  const router = useRouter();
+  const setAccessToken = useAuthStore((state: any) => state.setAccessToken);
+  const queryClient = useQueryClient();
   const {
     register,
     handleSubmit,
@@ -18,10 +27,34 @@ const SignIn = () => {
     resolver: zodResolver(signInSchema),
   });
 
+  //sign in mutation
+  const signinMutation = useMutation({
+    mutationFn: signinUser,
+    onSuccess: async (data: any) => {
+      setAccessToken(data.accessToken);
+      return queryClient.invalidateQueries({ queryKey: ['user'] });
+    },
+  });
+
   const handleSignIn = (data: ISignInFormData) => {
-    console.log(data);
-    reset();
+    signinMutation.mutate(
+      {
+        email: data.email,
+        password: data.password,
+      },
+      {
+        onError: (data: any) => {
+          toast.error(data.response.data.message);
+        },
+        onSuccess: (data) => {
+          router.push('/');
+          toast.success(data.message);
+          reset();
+        },
+      },
+    );
   };
+
   return (
     <div className='flex items-center justify-center grow bg-center bg-no-repeat page-bg min-h-screen w-full'>
       <div className='card max-w-[370px] w-full'>
@@ -33,17 +66,6 @@ const SignIn = () => {
             <h3 className='text-lg font-semibold text-gray-900 leading-none mb-2.5'>
               Sign in
             </h3>
-            <div className='flex items-center justify-center font-medium'>
-              <span className='text-2sm text-gray-600 me-1.5'>
-                Need an account?
-              </span>
-              <a
-                className='text-2sm link'
-                href='html/demo1/authentication/classNameic/sign-up.html'
-              >
-                Sign up
-              </a>
-            </div>
           </div>
 
           <div className='flex items-center gap-2'>
@@ -70,7 +92,10 @@ const SignIn = () => {
           <div className='flex flex-col gap-1'>
             <div className='flex items-center justify-between gap-1'>
               <label className='form-label text-gray-900'>Password</label>
-              <Link className='text-2sm link shrink-0' href='/forget-password'>
+              <Link
+                className='text-2sm link shrink-0'
+                href='/auth/forget-password'
+              >
                 Forgot Password?
               </Link>
             </div>
@@ -98,8 +123,9 @@ const SignIn = () => {
               </p>
             )}
           </div>
+
           <button className='btn btn-primary flex justify-center grow'>
-            Sign In
+            {signinMutation.isPending ? <Spinner /> : <p>Sign in</p>}
           </button>
         </form>
       </div>

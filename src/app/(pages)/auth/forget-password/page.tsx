@@ -1,9 +1,13 @@
 'use client';
+import Spinner from '@/components/Spinner';
 import { IForgetPasswordFormData } from '@/interfaces/auth.interface';
+import { forgetPassword } from '@/services/auth.service';
 import { forgetPasswordSchema } from '@/validation/auth.validation';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useMutation } from '@tanstack/react-query';
 import React from 'react';
 import { useForm } from 'react-hook-form';
+import { toast } from 'react-toastify';
 
 const ForgetPassword = () => {
   const {
@@ -15,9 +19,25 @@ const ForgetPassword = () => {
   } = useForm<IForgetPasswordFormData>({
     resolver: zodResolver(forgetPasswordSchema),
   });
+
+  const forgetPasswordMutation = useMutation({
+    mutationFn: forgetPassword,
+  });
   const handleForgetPassword = (data: IForgetPasswordFormData) => {
-    console.log(data);
-    reset();
+    forgetPasswordMutation.mutate(
+      {
+        email: data.email,
+      },
+      {
+        onError: (data: any) => {
+          toast.error(data.response.data.message);
+        },
+        onSuccess: (data) => {
+          toast.success(data.message);
+          reset();
+        },
+      },
+    );
   };
   return (
     <div className='flex items-center justify-center min-h-screen w-full grow bg-center bg-no-repeat page-bg'>
@@ -47,8 +67,7 @@ const ForgetPassword = () => {
             )}
           </div>
           <button className='btn btn-primary flex justify-center grow'>
-            Continue
-            <i className='ki-filled ki-black-right'></i>
+            {forgetPasswordMutation.isPending ? <Spinner /> : <p>Send</p>}
           </button>
         </form>
       </div>

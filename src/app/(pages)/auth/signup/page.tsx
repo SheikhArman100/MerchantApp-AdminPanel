@@ -1,29 +1,90 @@
 'use client';
+import Spinner from '@/components/Spinner';
 import { roles } from '@/constant';
+import useAxiosPrivate from '@/hooks/useAxiosPrivate';
 import { IRegisterFormData } from '@/interfaces/auth.interface';
 import { registerSchema } from '@/validation/auth.validation';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useMutation } from '@tanstack/react-query';
 import { ChevronDown } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
+import { toast } from 'react-toastify';
 
 const SignUp = () => {
   const [roleOpen, setRoleOpen] = useState(false);
   const [selectedRole, setSelectedRole] = useState('');
   const [passwordHidden, setPasswordHidden] = useState(true);
+  const axiosPrivate = useAxiosPrivate();
+
+  const router = useRouter();
 
   const {
     register,
     handleSubmit,
     reset,
     control,
+    setValue,
     formState: { errors },
   } = useForm<IRegisterFormData>({
     resolver: zodResolver(registerSchema),
   });
+
+  const transformFile = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onloadend = () => {
+        if (reader.result) {
+          resolve(reader.result as string);
+        } else {
+          reject(new Error('Failed to convert file to Base64'));
+        }
+      };
+      reader.onerror = () => {
+        reject(new Error('Error reading file'));
+      };
+    });
+  };
+
+  //registration mutation
+  const registerMutation = useMutation({
+    mutationFn: async (data) => {
+      // await new Promise((resolve) => setTimeout(resolve, 500));
+      const response = await axiosPrivate.post('/auth/register', data, {
+        withCredentials: true,
+      });
+
+      return response.data;
+    },
+  });
+
   const handleRegister = async (data: IRegisterFormData) => {
-    console.log(data);
-    reset();
+    //@ts-ignore
+    const image = await transformFile(data.image[0]);
+
+    registerMutation.mutate(
+      //@ts-ignore
+      {
+        firstName: data.firstName,
+        lastName: data.lastName,
+        email: data.email,
+        phoneNumber: data.phoneNumber,
+        image: image,
+        role: data.role,
+        password: data.password,
+      },
+      {
+        onError: (data: any) => {
+          toast.error(data.response.data.message);
+        },
+        onSuccess: (data) => {
+          toast.success(data.message);
+          router.push('/');
+        },
+      },
+    );
   };
 
   return (
@@ -220,7 +281,7 @@ const SignUp = () => {
             type='submit'
             className='btn btn-primary flex justify-center grow'
           >
-            Sign up
+            {registerMutation.isPending ? <Spinner /> : <p>Register</p>}
           </button>
         </form>
       </div>
