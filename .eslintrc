@@ -4,13 +4,14 @@
     "es2021": true,
     "node": true
   },
-  "plugins": ["@typescript-eslint", "simple-import-sort", "unused-imports"],
+  "plugins": ["@typescript-eslint","@tanstack/query", "simple-import-sort", ],
   "extends": [
     "eslint:recommended",
     "next",
     "next/core-web-vitals",
     "plugin:@typescript-eslint/recommended",
-    "prettier"
+    "prettier",
+    "plugin:@tanstack/eslint-plugin-query/recommended"
   ],
   "rules": {
     "no-unused-vars": "off",
@@ -62,7 +63,10 @@
           ["^"]
         ]
       }
-    ]
+    ],
+    "@tanstack/query/exhaustive-deps": "warn",
+    "@tanstack/query/prefer-query-object-syntax": "warn",
+    "@tanstack/query/stable-query-client": "warn"
   },
   "globals": {
     "React": true,

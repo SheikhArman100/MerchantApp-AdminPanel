@@ -19,6 +19,7 @@ module.exports = {
         'perf',
         'vercel',
         'create',
+        'setup',
       ],
     ],
   },
