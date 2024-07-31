@@ -2,16 +2,17 @@
 import { ISignInFormData } from '@/interfaces/auth.interface';
 import { signInSchema } from '@/validation/auth.validation';
 import { zodResolver } from '@hookform/resolvers/zod';
+import Link from 'next/link';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 const SignIn = () => {
-  const [passwordHidden, setPasswordHidden] = useState(true)
+  const [passwordHidden, setPasswordHidden] = useState(true);
   const {
     register,
     handleSubmit,
     reset,
-    control,
+
     formState: { errors },
   } = useForm<ISignInFormData>({
     resolver: zodResolver(signInSchema),
@@ -69,27 +70,26 @@ const SignIn = () => {
           <div className='flex flex-col gap-1'>
             <div className='flex items-center justify-between gap-1'>
               <label className='form-label text-gray-900'>Password</label>
-              <a
-                className='text-2sm link shrink-0'
-                href='html/demo1/authentication/classNameic/reset-password/enter-email.html'
-              >
+              <Link className='text-2sm link shrink-0' href='/forget-password'>
                 Forgot Password?
-              </a>
+              </Link>
             </div>
             <label className='input' data-toggle-password='true'>
               <input
                 placeholder='Enter Password'
-                type={passwordHidden?"password":"text"}
+                type={passwordHidden ? 'password' : 'text'}
                 {...register('password')}
               />
               <button
-              type='button'
+                type='button'
                 className='btn btn-icon'
-                onClick={()=>setPasswordHidden(!passwordHidden)}
+                onClick={() => setPasswordHidden(!passwordHidden)}
               >
-                {passwordHidden?<i className='ki-filled ki-eye-slash text-gray-500 '></i>:<i className='ki-filled ki-eye text-gray-500'></i>}
-                
-                
+                {passwordHidden ? (
+                  <i className='ki-filled ki-eye-slash text-gray-500 '></i>
+                ) : (
+                  <i className='ki-filled ki-eye text-gray-500'></i>
+                )}
               </button>
             </label>
             {errors.password?.message && (

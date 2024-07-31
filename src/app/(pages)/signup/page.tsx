@@ -5,12 +5,12 @@ import { registerSchema } from '@/validation/auth.validation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ChevronDown } from 'lucide-react';
 import { useState } from 'react';
-import { Controller, useForm, SubmitHandler } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 
 const SignUp = () => {
   const [roleOpen, setRoleOpen] = useState(false);
-  const [selectedRole,setSelectedRole]=useState("")
-  const [passwordHidden, setPasswordHidden] = useState(true)
+  const [selectedRole, setSelectedRole] = useState('');
+  const [passwordHidden, setPasswordHidden] = useState(true);
 
   const {
     register,
@@ -23,7 +23,7 @@ const SignUp = () => {
   });
   const handleRegister = async (data: IRegisterFormData) => {
     console.log(data);
-    reset()
+    reset();
   };
 
   return (
@@ -35,19 +35,13 @@ const SignUp = () => {
           onSubmit={handleSubmit(handleRegister)}
         >
           <div className='text-center mb-2.5'>
-            <h3 className='text-lg font-semibold text-gray-900 leading-none mb-2.5'>
+            <h3 className='text-xl font-semibold text-gray-900 leading-none mb-2.5'>
               Sign up
             </h3>
             <div className='flex items-center justify-center font-medium'>
-              <span className='text-2sm text-gray-600 me-1.5'>
-                Already have an Account ?
+              <span className='text-sm text-gray-600 me-1.5'>
+                Create a new user
               </span>
-              <a
-                className='text-2sm link'
-                href='html/demo1/authentication/classNameic/sign-in.html'
-              >
-                Sign In
-              </a>
             </div>
           </div>
           <div className='flex items-center gap-2'>
@@ -129,16 +123,18 @@ const SignUp = () => {
                 <input
                   {...register('password')}
                   placeholder='Enter Password'
-                  type={passwordHidden?"password":"text"}
+                  type={passwordHidden ? 'password' : 'text'}
                 />
                 <button
-                type='button'
+                  type='button'
                   className='btn btn-icon'
-                  onClick={()=>setPasswordHidden(!passwordHidden)}
+                  onClick={() => setPasswordHidden(!passwordHidden)}
                 >
-                  {passwordHidden?<i className='ki-filled ki-eye-slash text-gray-500 '></i>:<i className='ki-filled ki-eye text-gray-500 '></i>}
-                  
-                  
+                  {passwordHidden ? (
+                    <i className='ki-filled ki-eye-slash text-gray-500 '></i>
+                  ) : (
+                    <i className='ki-filled ki-eye text-gray-500 '></i>
+                  )}
                 </button>
               </label>
               {errors.password?.message && (
@@ -157,7 +153,11 @@ const SignUp = () => {
                   onClick={() => setRoleOpen(!roleOpen)}
                   className=' btn btn-light w-full flex items-center justify-between'
                 >
-                  {selectedRole?<span>{selectedRole}</span>:<span>Select a role</span>}
+                  {selectedRole ? (
+                    <span>{selectedRole}</span>
+                  ) : (
+                    <span>Select a role</span>
+                  )}
                   <ChevronDown className='size-4' />
                 </button>
                 {roleOpen ? (
@@ -179,7 +179,7 @@ const SignUp = () => {
                                 checked={value === role.value}
                                 onChange={() => {
                                   onChange(role.value);
-                                  setSelectedRole(role.name)
+                                  setSelectedRole(role.name);
                                   setRoleOpen(false);
                                 }}
                               />

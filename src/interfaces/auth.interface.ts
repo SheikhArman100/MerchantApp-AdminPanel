@@ -1,6 +1,6 @@
 import { Role } from '@/types/common';
 
-export interface IRegisterFormData {
+export type IRegisterFormData = {
   firstName: string;
   lastName: string;
   email: string;
@@ -8,15 +8,22 @@ export interface IRegisterFormData {
   password: string;
   role: Role;
   image: string;
-};
-export interface ISignInFormData{
-  email:string,
-  password:string,
+}
+export type ISignInFormData = {
+  email: string;
+  password: string;
 }
 
-export interface IChangePasswordFormData{
-  oldPassword:string,
-  newPassword:string
+export type IChangePasswordFormData = {
+  oldPassword: string;
+  newPassword: string;
+}
+
+export type IForgetPasswordFormData = {
+  email: string;
+}
+export type IResetPasswordFormData = {
+  newPassword: string;
 }
 // export type IFormFieldProps = {
 //   type: string;

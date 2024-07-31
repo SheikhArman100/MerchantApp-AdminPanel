@@ -2,7 +2,7 @@
 import { IChangePasswordFormData } from '@/interfaces/auth.interface';
 import { changePasswordSchema } from '@/validation/auth.validation';
 import { zodResolver } from '@hookform/resolvers/zod';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 const ChangePassword = () => {
@@ -15,12 +15,11 @@ const ChangePassword = () => {
     register,
     handleSubmit,
     reset,
-    control,
     formState: { errors },
   } = useForm<IChangePasswordFormData>({
     resolver: zodResolver(changePasswordSchema),
   });
-  const handleChangePassword = (data:IChangePasswordFormData) => {
+  const handleChangePassword = (data: IChangePasswordFormData) => {
     console.log(data);
     reset();
   };
@@ -28,13 +27,12 @@ const ChangePassword = () => {
     <div className='flex items-center justify-center min-h-screen w-full grow bg-center bg-no-repeat page-bg'>
       <div className='card max-w-[370px] w-full'>
         <form
-          
           className='card-body flex flex-col gap-5 p-10'
           onSubmit={handleSubmit(handleChangePassword)}
         >
           <div className='text-center'>
             <h3 className='text-lg font-semibold text-gray-900'>
-              Reset Password
+              Change Password
             </h3>
             <span className='text-2sm font-medium text-gray-600'>
               Enter your new password
@@ -72,9 +70,7 @@ const ChangePassword = () => {
             )}
           </div>
           <div className='flex flex-col gap-1'>
-            <label className='form-label text-gray-900'>
-              New Password
-            </label>
+            <label className='form-label text-gray-900'>New Password</label>
             <label className='input' data-toggle-password='true'>
               <input
                 placeholder='Enter a new Password'
