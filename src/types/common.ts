@@ -1,0 +1,9 @@
+export type Role =
+  | 'SUPER ADMIN'
+  | 'ADMIN'
+  | 'DISTRICT MANAGER'
+  | 'AREA MANAGER'
+  | 'TERRITORY MANAGER'
+  | 'FIELD OFFICER'
+  | 'MERCHANT';
+

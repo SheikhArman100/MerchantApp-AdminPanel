@@ -1,0 +1,71 @@
+import { z } from 'zod';
+
+export const registerSchema = z.object({
+  firstName: z.string().min(1,"User first name is required"),
+  lastName: z.string().min(1,"USer last name is required"),
+  email: z
+    .string().min(1,"Email is required")
+    .email({
+      message: 'Not a valid email',
+    }),
+  password: z
+    .string({
+      required_error: 'Password is required',
+    })
+    .min(6, {
+      message: 'Password should be 6 chars minimum',
+    }),
+  phoneNumber: z.string().min(1,'Phone number is required'),
+  image: z
+  .instanceof(FileList)
+  .refine((file) => file?.length == 1, 'File is required.'),
+  role: z.enum(
+    [
+      'SUPER ADMIN',
+      'ADMIN',
+      'DISTRICT MANAGER',
+      'AREA MANAGER',
+      'TERRITORY MANAGER',
+      'FIELD OFFICER',
+      'MERCHANT',
+    ],
+    {
+      required_error: 'Role is required',
+    },
+  ),
+});
+
+export const signInSchema=z.object({
+  email:z
+  .string().min(1,"Email is required")
+  .email({
+    message: 'Not a valid email',
+  }),
+  password: z
+  .string({
+    required_error: 'Password is required',
+  })
+  .min(6, {
+    message: 'Password should be 6 chars minimum',
+  }),
+})
+
+export const changePasswordSchema=z.object({
+  oldPassword: z
+  .string({
+    required_error: 'Old Password is required',
+  })
+  .min(6, {
+    message: 'Password should be 6 chars minimum',
+  }),
+  newPassword: z
+  .string({
+    required_error: 'New Password is required',
+  })
+  .min(6, {
+    message: 'Password should be 6 chars minimum',
+  }),
+}).refine((data) => data.oldPassword!== data.newPassword, {
+  message: "New and old password can not be same",
+  path: ["newPassword"],
+});
