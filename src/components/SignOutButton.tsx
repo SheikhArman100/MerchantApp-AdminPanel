@@ -2,7 +2,6 @@
 import { signoutUser } from '@/services/auth.service';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
-import React from 'react';
 import { toast } from 'react-toastify';
 import Spinner from './Spinner';
 
@@ -14,8 +13,8 @@ const SignOutButton = () => {
     mutationFn: signoutUser,
   });
   const handleClick = () => {
-    //@ts-ignore
     signoutMutation.mutate(
+      //@ts-ignore
       {},
       {
         onError: (data: any) => {
@@ -23,7 +22,9 @@ const SignOutButton = () => {
         },
         onSuccess: (data) => {
           router.refresh();
+
           toast.success(data.message);
+          router.push('/');
         },
       },
     );

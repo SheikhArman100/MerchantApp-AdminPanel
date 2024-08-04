@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import displayImage from '../../../../public/media/illustrations/30.svg';
+import displayImage from '../../../../../public/media/illustrations/30.svg';
 
 const CheckEmail = () => {
   return (

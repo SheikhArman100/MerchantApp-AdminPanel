@@ -1,15 +1,21 @@
 'use client';
+import useAxiosPrivate from '@/hooks/useAxiosPrivate';
 import { IChangePasswordFormData } from '@/interfaces/auth.interface';
 import { changePasswordSchema } from '@/validation/auth.validation';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useMutation } from '@tanstack/react-query';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { toast } from 'react-toastify';
 
 const ChangePassword = () => {
+  const router = useRouter();
   const [passwordHidden, setPasswordHidden] = useState({
     oldPassword: true,
     newPassword: true,
   });
+  const axiosPrivate = useAxiosPrivate();
 
   const {
     register,
@@ -19,9 +25,35 @@ const ChangePassword = () => {
   } = useForm<IChangePasswordFormData>({
     resolver: zodResolver(changePasswordSchema),
   });
+  const changePasswordMutation = useMutation({
+    mutationFn: async (data) => {
+      // await new Promise((resolve) => setTimeout(resolve, 500));
+      const response = await axiosPrivate.put('/auth/change-password', data, {
+        withCredentials: true,
+      });
+
+      return response.data;
+    },
+  });
+
   const handleChangePassword = (data: IChangePasswordFormData) => {
-    console.log(data);
-    reset();
+    changePasswordMutation.mutate(
+      //@ts-ignore
+      {
+        newPassword: data.newPassword,
+        oldPassword: data.oldPassword,
+      },
+      {
+        onError: (data: any) => {
+          toast.error(data.response.data.message);
+        },
+        onSuccess: (data) => {
+          toast.success(data.message);
+          router.push('/auth/signin');
+          reset();
+        },
+      },
+    );
   };
   return (
     <div className='flex items-center justify-center min-h-screen w-full grow bg-center bg-no-repeat page-bg'>

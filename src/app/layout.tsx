@@ -1,9 +1,9 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 
-import './globals.css';
 import QueryProvider from '@/libs/react-query';
 import ToastifyComponent from '@/libs/react-toastify/index';
+import './globals.css';
 
 const inter = Inter({ subsets: ['latin'] });
 

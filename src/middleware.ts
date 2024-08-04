@@ -1,6 +1,9 @@
 // middleware
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
+import { CustomError } from './error';
+import { PermissionRole } from './constant';
+import Error from 'next/error';
 
 // This function can be marked `async` if using `await` inside
 export async function middleware(request: NextRequest) {
@@ -25,10 +28,16 @@ export async function middleware(request: NextRequest) {
 
   //authorized
   const user = await response.json();
-  // console.log(user);
+  // console.log(user)
+  // console.log(PermissionRole.includes(user.data.role))
+
+  //but not Super Admin or Admin
+  if (!PermissionRole.includes(user.data.role)) {
+    return NextResponse.redirect(new URL(`/error/unauthorized`, request.url));
+  }
 }
 
 // See "Matching Paths" below to learn more
 export const config = {
-  matcher: ['/', '/auth/signup'],
+  matcher: ['/', '/auth/signup', '/auth/change-password'],
 };
