@@ -31,28 +31,14 @@ const SignUp = () => {
     resolver: zodResolver(registerSchema),
   });
 
-  const transformFile = (file: File): Promise<string> => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onloadend = () => {
-        if (reader.result) {
-          resolve(reader.result as string);
-        } else {
-          reject(new Error('Failed to convert file to Base64'));
-        }
-      };
-      reader.onerror = () => {
-        reject(new Error('Error reading file'));
-      };
-    });
-  };
-
   //registration mutation
   const registerMutation = useMutation({
     mutationFn: async (data) => {
       // await new Promise((resolve) => setTimeout(resolve, 500));
       const response = await axiosPrivate.post('/auth/register', data, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
         withCredentials: true,
       });
 
@@ -61,20 +47,29 @@ const SignUp = () => {
   });
 
   const handleRegister = async (data: IRegisterFormData) => {
-    //@ts-ignore
-    const image = await transformFile(data.image[0]);
+    const formData = new FormData();
+    formData.append('firstName', data.firstName);
+    formData.append('lastName', data.lastName);
+    formData.append('email', data.email);
+    formData.append('phoneNumber', data.phoneNumber);
+    formData.append('password', data.password);
+    formData.append('role', data.role);
+    formData.append('image', data.image[0]);
+    // console.log(data.image[])
+    // console.log(formData)
 
     registerMutation.mutate(
       //@ts-ignore
-      {
-        firstName: data.firstName,
-        lastName: data.lastName,
-        email: data.email,
-        phoneNumber: data.phoneNumber,
-        image: image,
-        role: data.role,
-        password: data.password,
-      },
+      // {
+      //   firstName: data.firstName,
+      //   lastName: data.lastName,
+      //   email: data.email,
+      //   phoneNumber: data.phoneNumber,
+      //   image: image,
+      //   role: data.role,
+      //   password: data.password,
+      // },
+      formData,
       {
         onError: (data: any) => {
           toast.error(data.response.data.message);

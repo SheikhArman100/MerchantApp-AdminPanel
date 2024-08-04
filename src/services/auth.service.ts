@@ -1,4 +1,7 @@
 import { axiosPublic } from '@/libs/axios';
+import axios from 'axios';
+
+const baseURL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
 export const signinUser = async (data: any) => {
   await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -11,7 +14,11 @@ export const signinUser = async (data: any) => {
 
 export const registerUser = async (data: any) => {
   await new Promise((resolve) => setTimeout(resolve, 1000));
-  const response = await axiosPublic.post('/auth/register', data);
+  const response = await axios.post(`${baseURL}/auth/register`, data, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
 
   return response.data;
 };

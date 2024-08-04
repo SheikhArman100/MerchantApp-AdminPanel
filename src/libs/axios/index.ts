@@ -13,3 +13,9 @@ export const axiosPrivate = axios.create({
   headers: { 'Content-Type': 'application/json' },
   withCredentials: true,
 });
+
+// export const axiosFormUpload = axios.create({
+//   baseURL: baseURL,
+//   headers: { 'Content-Type': 'multipart/form-data'},
+//   withCredentials: true,
+// });
